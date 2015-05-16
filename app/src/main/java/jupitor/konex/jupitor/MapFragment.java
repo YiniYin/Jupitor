@@ -3,6 +3,7 @@ package jupitor.konex.jupitor;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,8 +14,10 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +32,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
@@ -75,6 +79,15 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mSensorManager = (SensorManager) this.getActivity().getSystemService(Context.SENSOR_SERVICE);
+        mVectorSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        mGoogleApiClient = new GoogleApiClient.Builder(this.getActivity())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+        createLocationRequest();
     }
 
     @Override
@@ -86,24 +99,32 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     @Override
     public void onStart() {
         super.onStart();
-        mGoogleApiClient = new GoogleApiClient.Builder(this.getActivity())
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-        mGoogleApiClient.connect();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         setUpMapIfNeeded();
+        mMap.setMyLocationEnabled(true);
+        mGoogleApiClient.connect();
+        if (mGoogleApiClient.isConnected() && mLocationRequest != null) {
+            startLocationUpdates();
+        }
     }
 
     @Override
     public void onStop() {
-        mGoogleApiClient.disconnect();
         super.onStop();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
+        stopLocationUpdates();
+        if (mGoogleApiClient != null) mGoogleApiClient.disconnect();
+        if (mMap != null) mMap.setMyLocationEnabled(false);
+        killSearchRadius();
     }
 
     @Override
@@ -159,25 +180,37 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng sydney = new LatLng(-33.867, 151.206);
+        //map.setMyLocationEnabled(true);
+        if (mLatLng != null)
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
 
-        map.setMyLocationEnabled(true);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-
-        map.addMarker(new MarkerOptions()
-                .title("Sydney")
-                .snippet("The most populous city in Australia.")
-                .position(sydney));
+//        map.addMarker(new MarkerOptions()
+//                .title("Me")
+//                .snippet("I am here.")
+//                .position(mLatLng));
     }
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        mLocationRequest = LocationRequest.create();
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mLocationRequest.setInterval(1000);
+        if (mLocationRequest != null)
+            startLocationUpdates();
+    }
 
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    protected void startLocationUpdates() {
         LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
+    }
+
+    protected void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
     }
 
     @Override
@@ -193,6 +226,8 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     @Override
     public void onLocationChanged(Location location) {
         //mLocationView.setText("Location received: " + location.toString());
+        mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
     }
 
     @Override
@@ -238,5 +273,71 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
         if (x > max) return max;
         if (x < min) return min;
         return x;
+    }
+
+    private void toggleSearchRadius(boolean glow, MenuItem item) {
+        if (mLatLng == null || item == null) {
+            searchRadiusOn = false;
+            item.setIcon(R.drawable.ic_action_search_radius_off);
+            killSearchRadius();
+            return;
+        }
+
+        if (glow) {
+            item.setIcon(R.drawable.ic_action_search_radius_on);
+            mCircle = mMap.addCircle(new CircleOptions()
+                    .center(mLatLng)
+                    .radius(SEARCH_RADIUS)
+                    .strokeColor(Color.GRAY));
+            vAnimator = ValueAnimator.ofFloat(0f,100f);
+            vAnimator.setRepeatCount(ValueAnimator.INFINITE);
+            vAnimator.setRepeatMode(ValueAnimator.RESTART);
+            vAnimator.setDuration(2300);
+            vAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+            vAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float animationFraction = animation.getAnimatedFraction();
+                    mCircle.setRadius(animationFraction*SEARCH_RADIUS);
+                    mCircle.setStrokeWidth(1+animationFraction*7);
+                }
+            });
+            vAnimator.start();
+        } else {
+            item.setIcon(R.drawable.ic_action_search_radius_off);
+            killSearchRadius();
+        }
+    }
+
+    private void killSearchRadius() {
+        if (vAnimator != null) {
+            vAnimator.removeAllUpdateListeners();
+            vAnimator.end();
+            mCircle.remove();
+        }
+    }
+
+    private void onMagicCameraClicked(MenuItem item) {
+        if (magicCameraOn)
+            toggleMagicCamera(magicCameraOn = false, item);
+        else
+            toggleMagicCamera(magicCameraOn = true, item);
+    }
+
+    private void toggleMagicCamera(boolean magicOn, MenuItem item) {
+        if (item == null) {
+            magicCameraOn = false;
+            item.setIcon(R.drawable.ic_action_magic_camera_off);
+            mSensorManager.unregisterListener(this);
+            return;
+        }
+
+        if (magicOn) {
+            item.setIcon(R.drawable.ic_action_magic_camera_on);
+            mSensorManager.registerListener(this, mVectorSensor, 16000);
+        } else {
+            item.setIcon(R.drawable.ic_action_magic_camera_off);
+            mSensorManager.unregisterListener(this);
+        }
     }
 }
