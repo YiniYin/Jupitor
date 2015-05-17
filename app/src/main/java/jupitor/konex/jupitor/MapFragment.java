@@ -79,15 +79,30 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        getSensor();
+        getApiClient();
+        createLocationRequest();
+    }
+
+    private void getSensor() {
         mSensorManager = (SensorManager) this.getActivity().getSystemService(Context.SENSOR_SERVICE);
-        mVectorSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        mVectorSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);        
+    }
+
+    private void getApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this.getActivity())
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+    }
 
-        createLocationRequest();
+    private void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     @Override
@@ -104,12 +119,32 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     @Override
     public void onResume() {
         super.onResume();
-        setUpMapIfNeeded();
+        getMap();
         mMap.setMyLocationEnabled(true);
         mGoogleApiClient.connect();
-        if (mGoogleApiClient.isConnected() && mLocationRequest != null) {
-            startLocationUpdates();
+    }
+
+    private void getMap() {
+        if (mMap == null) {
+            mMap = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMap();
+            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                    .findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
         }
+    }
+
+    private void setDefaultMarker() {
+        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        startLocationUpdates();
+    }
+
+    private void startLocationUpdates() {
+        LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient, mLocationRequest, this);
     }
 
     @Override
@@ -122,9 +157,14 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
         super.onPause();
         mSensorManager.unregisterListener(this);
         stopLocationUpdates();
-        if (mGoogleApiClient != null) mGoogleApiClient.disconnect();
-        if (mMap != null) mMap.setMyLocationEnabled(false);
+        mGoogleApiClient.disconnect();
+        mMap.setMyLocationEnabled(false);
         killSearchRadius();
+    }
+
+    private void stopLocationUpdates() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient, this);
     }
 
     @Override
@@ -166,21 +206,8 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
         }
     }
 
-    private void setUpMapIfNeeded() {
-        if (mMap == null) {
-            mMap = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map)).getMap();
-            if (mMap != null) {
-                setUpMap();
-            }
-            SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                    .findFragmentById(R.id.map);
-            mapFragment.getMapAsync(this);
-        }
-    }
-
     @Override
     public void onMapReady(GoogleMap map) {
-        //map.setMyLocationEnabled(true);
         if (mLatLng != null)
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
 
@@ -188,29 +215,6 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
 //                .title("Me")
 //                .snippet("I am here.")
 //                .position(mLatLng));
-    }
-
-    @Override
-    public void onConnected(Bundle connectionHint) {
-        if (mLocationRequest != null)
-            startLocationUpdates();
-    }
-
-    protected void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
-
-    protected void startLocationUpdates() {
-        LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient, mLocationRequest, this);
-    }
-
-    protected void stopLocationUpdates() {
-        LocationServices.FusedLocationApi.removeLocationUpdates(
-                mGoogleApiClient, this);
     }
 
     @Override
@@ -227,7 +231,7 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     public void onLocationChanged(Location location) {
         //mLocationView.setText("Location received: " + location.toString());
         mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
     }
 
     @Override
@@ -256,10 +260,6 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
 //    public void onDisconnected() {
 //        // Do nothing
 //    }
-
-    private void setUpMap() {
-        mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-    }
 
     private boolean checkReady() {
         if (mMap == null) {
