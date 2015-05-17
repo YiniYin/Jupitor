@@ -1,23 +1,19 @@
 package jupitor.konex.jupitor;
 
-import android.app.Activity;
+import android.content.ContextWrapper;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 
 public class MainActivity extends ActionBarActivity
@@ -46,6 +42,39 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        init();
+    }
+
+    private void init() {
+        initDB();
+    }
+
+    private void initDB() {
+        try {
+            if (doesDatabaseExist(this, consts.dbPath)) {
+                InputStream dbInput = getApplicationContext().getAssets().open(consts.dbName);
+                String outFileName = consts.dbPath;
+                OutputStream dbOutput = new FileOutputStream(outFileName);
+                try {
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = dbInput.read(buffer)) > 0) {
+                        dbOutput.write(buffer, 0, length);
+                    }
+                } finally {
+                    dbOutput.flush();
+                    dbOutput.close();
+                    dbInput.close();
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    private boolean doesDatabaseExist(ContextWrapper context, String dbName) {
+        File dbFile = context.getDatabasePath(dbName);
+        return dbFile.exists();
     }
 
     @Override
