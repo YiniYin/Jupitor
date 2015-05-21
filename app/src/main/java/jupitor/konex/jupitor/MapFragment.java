@@ -37,6 +37,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
+import java.util.List;
+
 public class MapFragment extends Fragment implements SensorEventListener, GoogleApiClient.ConnectionCallbacks
         ,GoogleApiClient.OnConnectionFailedListener,LocationListener,OnMapReadyCallback {
     private final String TAG = "JupiterMap";
@@ -210,6 +212,8 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     public void onMapReady(GoogleMap map) {
         if (mLatLng != null)
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
+
+        List<SpeedCameras> speedCameras = SpeedCameras.listAll(SpeedCameras.class);
 
 //        map.addMarker(new MarkerOptions()
 //                .title("Me")

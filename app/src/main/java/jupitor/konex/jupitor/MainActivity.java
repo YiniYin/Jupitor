@@ -1,6 +1,8 @@
 package jupitor.konex.jupitor;
 
+import android.content.Context;
 import android.content.ContextWrapper;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -52,7 +54,10 @@ public class MainActivity extends ActionBarActivity
 
     private void initDB() {
         try {
-            if (doesDatabaseExist(this, consts.dbPath)) {
+            if (!doesDatabaseExist(this, consts.dbPath)) {
+                Context context = getApplicationContext();
+                SQLiteDatabase db = context.openOrCreateDatabase(consts.dbName, context.MODE_PRIVATE, null);
+                db.close();
                 InputStream dbInput = getApplicationContext().getAssets().open(consts.dbName);
                 String outFileName = consts.dbPath;
                 OutputStream dbOutput = new FileOutputStream(outFileName);
@@ -69,6 +74,7 @@ public class MainActivity extends ActionBarActivity
                 }
             }
         } catch (Exception e) {
+            e.toString();
         }
     }
 
