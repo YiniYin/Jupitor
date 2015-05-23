@@ -213,7 +213,7 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
         if (mLatLng != null)
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
 
-        List<SpeedCameras> speedCameras = SpeedCameras.listAll(SpeedCameras.class);
+        List<Cameras> speedCameras = Cameras.listAll(Cameras.class);
 
 //        map.addMarker(new MarkerOptions()
 //                .title("Me")

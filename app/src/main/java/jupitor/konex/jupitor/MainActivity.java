@@ -44,43 +44,6 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
-
-        init();
-    }
-
-    private void init() {
-        initDB();
-    }
-
-    private void initDB() {
-        try {
-            if (!doesDatabaseExist(this, consts.dbPath)) {
-                Context context = getApplicationContext();
-                SQLiteDatabase db = context.openOrCreateDatabase(consts.dbName, context.MODE_PRIVATE, null);
-                db.close();
-                InputStream dbInput = getApplicationContext().getAssets().open(consts.dbName);
-                String outFileName = consts.dbPath;
-                OutputStream dbOutput = new FileOutputStream(outFileName);
-                try {
-                    byte[] buffer = new byte[1024];
-                    int length;
-                    while ((length = dbInput.read(buffer)) > 0) {
-                        dbOutput.write(buffer, 0, length);
-                    }
-                } finally {
-                    dbOutput.flush();
-                    dbOutput.close();
-                    dbInput.close();
-                }
-            }
-        } catch (Exception e) {
-            e.toString();
-        }
-    }
-
-    private boolean doesDatabaseExist(ContextWrapper context, String dbName) {
-        File dbFile = context.getDatabasePath(dbName);
-        return dbFile.exists();
     }
 
     @Override
