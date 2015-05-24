@@ -4,12 +4,12 @@ package jupitor.konex.jupitor;
 import com.orm.SugarRecord;
 
 public class Cameras extends SugarRecord {
-    int _id;
+    long ID;
     String description;
     String street;
     String suburb;
     String state;
-    int speed_limit;
+    long speed_limit;
     String type;
     double latitude;
     double longitude;
@@ -20,10 +20,10 @@ public class Cameras extends SugarRecord {
     public Cameras() {
     }
 
-    public Cameras(int _id, String description, String street, String suburb, String state,
+    public Cameras(int ID, String description, String street, String suburb, String state,
                    int speed_limit, String type, float latitude, float longitude, String reference,
                    long last_update_time, String country) {
-        this._id = _id;
+        this.ID = ID;
         this.description = description;
         this.street = street;
         this.suburb = suburb;

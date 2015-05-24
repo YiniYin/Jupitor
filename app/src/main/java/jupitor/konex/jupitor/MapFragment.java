@@ -12,6 +12,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -38,6 +39,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
 import java.util.List;
+
+import jupitor.konex.jupitor.utils.ManifestHelper;
 
 public class MapFragment extends Fragment implements SensorEventListener, GoogleApiClient.ConnectionCallbacks
         ,GoogleApiClient.OnConnectionFailedListener,LocationListener,OnMapReadyCallback {
@@ -210,15 +213,28 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
 
     @Override
     public void onMapReady(GoogleMap map) {
-        if (mLatLng != null)
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(consts.auckland_geolocation, 13));
+        drawCameraMarkers(map);
+    }
 
+    private void drawCameraMarkers(GoogleMap map) {
         List<Cameras> speedCameras = Cameras.listAll(Cameras.class);
+        for (Cameras speedCamera : speedCameras) {
+            map.addMarker(new MarkerOptions()
+            .title(getSpeedCameraTitle(speedCamera))
+            .snippet(getSpeedCameraSnippet(speedCamera))
+            .position(new LatLng(speedCamera.latitude, speedCamera.longitude)));
+        }
+    }
 
-//        map.addMarker(new MarkerOptions()
-//                .title("Me")
-//                .snippet("I am here.")
-//                .position(mLatLng));
+    private String getSpeedCameraSnippet(Cameras speedCamera) {
+        return speedCamera.street + "," + speedCamera.suburb;
+    }
+
+    private String getSpeedCameraTitle(Cameras speedCamera) {
+        String title = speedCamera.type + " " + "camera";
+        title = speedCamera.speed_limit == 0 ? title : title + " " + speedCamera.speed_limit + "km";
+        return title;
     }
 
     @Override
