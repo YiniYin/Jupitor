@@ -4,8 +4,13 @@ package jupitor.konex.jupitor;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.widget.ImageView;
 
+import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.orm.SugarApp;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,12 +21,32 @@ public class Jupitor extends SugarApp {
 
     @Override
     public final void onCreate() {
-        init();
+        initDB();
         super.onCreate();
+        init();
     }
 
     private void init() {
-        initDB();
+        initImageLoader();
+    }
+
+    private void initImageLoader() {
+        DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
+            @Override
+            public void set(ImageView imageView, Uri uri, Drawable placeholder) {
+                Picasso.with(imageView.getContext()).load(uri).placeholder(placeholder).into(imageView);
+            }
+
+            @Override
+            public void cancel(ImageView imageView) {
+                Picasso.with(imageView.getContext()).cancelRequest(imageView);
+            }
+
+            @Override
+            public Drawable placeholder(Context ctx) {
+                return null;
+            }
+        });
     }
 
     private void initDB() {

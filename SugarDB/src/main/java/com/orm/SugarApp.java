@@ -17,5 +17,4 @@ public class SugarApp extends Application {
         super.onTerminate();
         SugarContext.terminate();
     }
-
 }

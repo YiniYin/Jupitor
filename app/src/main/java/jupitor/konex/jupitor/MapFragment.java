@@ -40,7 +40,6 @@ import com.google.maps.android.SphericalUtil;
 
 import java.util.List;
 
-import jupitor.konex.jupitor.utils.ManifestHelper;
 
 public class MapFragment extends Fragment implements SensorEventListener, GoogleApiClient.ConnectionCallbacks
         ,GoogleApiClient.OnConnectionFailedListener,LocationListener,OnMapReadyCallback {
@@ -84,7 +83,6 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
         getSensor();
         getApiClient();
         createLocationRequest();
@@ -176,7 +174,7 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            //mListener = (OnFragmentInteractionListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
