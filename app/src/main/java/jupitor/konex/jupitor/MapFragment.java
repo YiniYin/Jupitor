@@ -12,7 +12,6 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -216,8 +215,8 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     }
 
     private void drawCameraMarkers(GoogleMap map) {
-        List<Cameras> speedCameras = Cameras.listAll(Cameras.class);
-        for (Cameras speedCamera : speedCameras) {
+        List<Camera> speedCameras = Camera.listAll(Camera.class);
+        for (Camera speedCamera : speedCameras) {
             map.addMarker(new MarkerOptions()
             .title(getSpeedCameraTitle(speedCamera))
             .snippet(getSpeedCameraSnippet(speedCamera))
@@ -225,11 +224,11 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
         }
     }
 
-    private String getSpeedCameraSnippet(Cameras speedCamera) {
+    private String getSpeedCameraSnippet(Camera speedCamera) {
         return speedCamera.street + "," + speedCamera.suburb;
     }
 
-    private String getSpeedCameraTitle(Cameras speedCamera) {
+    private String getSpeedCameraTitle(Camera speedCamera) {
         String title = speedCamera.type + " " + "camera";
         title = speedCamera.speed_limit == 0 ? title : title + " " + speedCamera.speed_limit + "km";
         return title;
