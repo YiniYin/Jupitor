@@ -94,6 +94,10 @@ public class MainActivity extends AppCompatActivity {
         public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
             if (drawerItem instanceof Nameable) {
 
+                UserPreference pref = (UserPreference.find(UserPreference.class, "NAME = ?",
+                        ((Nameable) drawerItem).getName())).get(0);
+                pref.value = String.valueOf(isChecked);
+                pref.save();
                 Log.i("material-drawer", "DrawerItem: " + ((Nameable) drawerItem).getName() +
                         " - toggleChecked: " + isChecked);
             } else {
