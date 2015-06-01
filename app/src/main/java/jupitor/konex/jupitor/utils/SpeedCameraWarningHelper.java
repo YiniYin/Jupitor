@@ -2,14 +2,12 @@ package jupitor.konex.jupitor.utils;
 
 
 import android.location.Location;
-
 import java.util.List;
-
 import jupitor.konex.jupitor.Camera;
 
 public class SpeedCameraWarningHelper {
 
-    public Camera getApproachingCamera(Location currentLoc, Location prevLoc) {
+    public static Camera getApproachingCamera(Location currentLoc, Location prevLoc) {
         Location speedCameraLoc = new Location("Default Location Provider");
         Camera approachingCamera = new Camera();
         float prevDistance, currentDistance, shortestDistance = Float.MAX_VALUE;

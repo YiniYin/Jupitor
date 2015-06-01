@@ -4,10 +4,13 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.materialdrawer.Drawer;
@@ -16,8 +19,13 @@ import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
+import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.mikepenz.materialdrawer.model.interfaces.Nameable;
+import com.mikepenz.materialdrawer.model.interfaces.OnCheckedChangeListener;
+import com.mikepenz.octicons_typeface_library.Octicons;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -36,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private void init(Bundle savedInstanceState) {
         initProfile(savedInstanceState);
         Toolbar toolbar = initToolbar();
-        initDrawer(toolbar);
+        initDrawer(savedInstanceState, toolbar);
         initMap();
     }
 
@@ -53,14 +61,34 @@ public class MainActivity extends AppCompatActivity {
         return toolbar;
     }
 
-    private void initDrawer(Toolbar toolbar) {
+    private void initDrawer(Bundle savedInstanceState, Toolbar toolbar) {
         new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
                 .withAccountHeader(headerResult)
+                .addDrawerItems(
+                        new SectionDrawerItem().withName(R.string.drawer_item_section_header),
+                        new SwitchDrawerItem()
+                                .withName("Camera sound warning").withIcon(CommunityMaterial.Icon.cmd_bell)
+                                .withChecked(true).withOnCheckedChangeListener(onCheckedChangeListener),
+                        new SwitchDrawerItem()
+                                .withName("Camera vibrate warning").withIcon(CommunityMaterial.Icon.cmd_vibrate)
+                                .withChecked(true).withOnCheckedChangeListener(onCheckedChangeListener))
                 .withAnimateDrawerItems(true)
+                .withSavedInstance(savedInstanceState)
                 .build();
     }
+
+    private OnCheckedChangeListener onCheckedChangeListener = new OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
+            if (drawerItem instanceof Nameable) {
+                Log.i("material-drawer", "DrawerItem: " + ((Nameable) drawerItem).getName() + " - toggleChecked: " + isChecked);
+            } else {
+                Log.i("material-drawer", "toggleChecked: " + isChecked);
+            }
+        }
+    };
 
     private void initProfile(Bundle savedInstanceState) {
         final IProfile myProfile = new ProfileDrawerItem()

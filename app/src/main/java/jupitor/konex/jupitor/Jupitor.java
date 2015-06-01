@@ -8,7 +8,10 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import com.mikepenz.community_material_typeface_library.CommunityMaterial;
+import com.mikepenz.iconics.Iconics;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
+import com.mikepenz.meteocons_typeface_library.Meteoconcs;
 import com.orm.SugarApp;
 import com.squareup.picasso.Picasso;
 
@@ -28,6 +31,12 @@ public class Jupitor extends SugarApp {
 
     private void init() {
         initImageLoader();
+        initTypeface();
+    }
+
+    private void initTypeface() {
+        Iconics.registerFont(new Meteoconcs());
+        Iconics.registerFont(new CommunityMaterial());
     }
 
     private void initImageLoader() {

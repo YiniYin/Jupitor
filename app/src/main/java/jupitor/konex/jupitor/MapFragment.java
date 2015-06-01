@@ -39,6 +39,8 @@ import com.google.maps.android.SphericalUtil;
 
 import java.util.List;
 
+import static jupitor.konex.jupitor.utils.SpeedCameraWarningHelper.getApproachingCamera;
+
 
 public class MapFragment extends Fragment implements SensorEventListener, GoogleApiClient.ConnectionCallbacks
         ,GoogleApiClient.OnConnectionFailedListener,LocationListener,OnMapReadyCallback {
@@ -46,7 +48,9 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static boolean magicCameraOn = false;
     private static boolean searchRadiusOn = false;
-    private static LatLng mLatLng;
+    private static LatLng mCurrentLatLng;
+    private static Location mCurrentLocation;
+    private static Location mPrevLocation;
     private static final float SEARCH_RADIUS = 700;
 
     private GoogleMap mMap;
@@ -247,13 +251,23 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     @Override
     public void onLocationChanged(Location location) {
         //mLocationView.setText("Location received: " + location.toString());
-        mLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 13));
+        mPrevLocation = mCurrentLocation;
+        mCurrentLocation = location;
+        mCurrentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        speedCameraWarning(mCurrentLocation, mPrevLocation);
+    }
+
+    private void speedCameraWarning(Location mCurrentLatLng, Location mPrevLatLng) {
+        Camera camera = getApproachingCamera(mCurrentLatLng, mPrevLatLng);
+        warnApproachingCamera(camera);
+    }
+
+    private void warnApproachingCamera(Camera camera) {
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (mLatLng != null && checkReady()) {
+        if (mCurrentLatLng != null && checkReady()) {
             SensorManager.getRotationMatrixFromVector(mRotationMatrix, event.values);
             SensorManager.getOrientation(mRotationMatrix, mValues);
             mAzimuth = (float) Math.toDegrees(mValues[0]);
@@ -263,7 +277,7 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
                     tilt(clamp(0,mTilt,(float)67.5)).
                     bearing(mAzimuth).
                     zoom(13+5*(mTilt/90)).
-                    target(SphericalUtil.computeOffset(mLatLng, TARGET_OFFSET_METERS, mAzimuth)).
+                    target(SphericalUtil.computeOffset(mCurrentLatLng, TARGET_OFFSET_METERS, mAzimuth)).
                     build();
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
@@ -272,11 +286,6 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
-
-//    @Override
-//    public void onDisconnected() {
-//        // Do nothing
-//    }
 
     private boolean checkReady() {
         if (mMap == null) {
@@ -293,7 +302,7 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     }
 
     private void toggleSearchRadius(boolean glow, MenuItem item) {
-        if (mLatLng == null || item == null) {
+        if (mCurrentLatLng == null || item == null) {
             searchRadiusOn = false;
             item.setIcon(R.drawable.ic_action_search_radius_off);
             killSearchRadius();
@@ -303,7 +312,7 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
         if (glow) {
             item.setIcon(R.drawable.ic_action_search_radius_on);
             mCircle = mMap.addCircle(new CircleOptions()
-                    .center(mLatLng)
+                    .center(mCurrentLatLng)
                     .radius(SEARCH_RADIUS)
                     .strokeColor(Color.GRAY));
             vAnimator = ValueAnimator.ofFloat(0f,100f);
