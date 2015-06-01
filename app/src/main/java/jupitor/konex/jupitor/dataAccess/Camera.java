@@ -1,4 +1,4 @@
-package jupitor.konex.jupitor;
+package jupitor.konex.jupitor.dataAccess;
 
 
 import com.orm.SugarRecord;

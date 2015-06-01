@@ -39,6 +39,8 @@ import com.google.maps.android.SphericalUtil;
 
 import java.util.List;
 
+import jupitor.konex.jupitor.dataAccess.Camera;
+
 import static jupitor.konex.jupitor.utils.SpeedCameraWarningHelper.getApproachingCamera;
 
 

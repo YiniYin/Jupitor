@@ -3,7 +3,7 @@ package jupitor.konex.jupitor.utils;
 
 import android.location.Location;
 import java.util.List;
-import jupitor.konex.jupitor.Camera;
+import jupitor.konex.jupitor.dataAccess.Camera;
 
 public class SpeedCameraWarningHelper {
 

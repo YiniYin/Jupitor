@@ -25,7 +25,8 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 import com.mikepenz.materialdrawer.model.interfaces.OnCheckedChangeListener;
-import com.mikepenz.octicons_typeface_library.Octicons;
+
+import jupitor.konex.jupitor.dataAccess.UserPreference;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -69,21 +70,32 @@ public class MainActivity extends AppCompatActivity {
                 .addDrawerItems(
                         new SectionDrawerItem().withName(R.string.drawer_item_section_header),
                         new SwitchDrawerItem()
-                                .withName("Camera sound warning").withIcon(CommunityMaterial.Icon.cmd_bell)
-                                .withChecked(true).withOnCheckedChangeListener(onCheckedChangeListener),
+                                .withName("Camera sound warning")
+                                .withIcon(CommunityMaterial.Icon.cmd_bell)
+                                .withChecked(getSwitchDrawerItemValue("Camera sound warning"))
+                                .withOnCheckedChangeListener(onCheckedChangeListener),
                         new SwitchDrawerItem()
-                                .withName("Camera vibrate warning").withIcon(CommunityMaterial.Icon.cmd_vibrate)
-                                .withChecked(true).withOnCheckedChangeListener(onCheckedChangeListener))
+                                .withName("Camera vibrate warning")
+                                .withIcon(CommunityMaterial.Icon.cmd_vibrate)
+                                .withChecked(getSwitchDrawerItemValue("Camera vibrate warning"))
+                                .withOnCheckedChangeListener(onCheckedChangeListener))
                 .withAnimateDrawerItems(true)
                 .withSavedInstance(savedInstanceState)
                 .build();
+    }
+
+    private boolean getSwitchDrawerItemValue(String itemName) {
+        UserPreference pref = (UserPreference.find(UserPreference.class, "NAME = ?", itemName)).get(0);
+        return Boolean.valueOf(pref.value);
     }
 
     private OnCheckedChangeListener onCheckedChangeListener = new OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(IDrawerItem drawerItem, CompoundButton buttonView, boolean isChecked) {
             if (drawerItem instanceof Nameable) {
-                Log.i("material-drawer", "DrawerItem: " + ((Nameable) drawerItem).getName() + " - toggleChecked: " + isChecked);
+
+                Log.i("material-drawer", "DrawerItem: " + ((Nameable) drawerItem).getName() +
+                        " - toggleChecked: " + isChecked);
             } else {
                 Log.i("material-drawer", "toggleChecked: " + isChecked);
             }
