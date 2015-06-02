@@ -265,6 +265,7 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     }
 
     private void warnApproachingCamera(Camera camera) {
+
     }
 
     @Override
