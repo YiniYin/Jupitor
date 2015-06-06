@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initDrawer(Bundle savedInstanceState, Toolbar toolbar) {
-        new DrawerBuilder()
+        result = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
                 .withAccountHeader(headerResult)
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
     private void initProfile(Bundle savedInstanceState) {
         final IProfile myProfile = new ProfileDrawerItem()
                 .withName("Yini Yin")
-                .withEmail("yinnski@gmail.com")
+                .withEmail("yinnski@github.com")
                 .withIcon(getResources()
                         .getDrawable(R.drawable.profile6));
 
