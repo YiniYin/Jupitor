@@ -1,5 +1,6 @@
 package jupitor.konex.jupitor;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -8,17 +9,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 
 import com.mikepenz.community_material_typeface_library.CommunityMaterial;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.SwitchDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
@@ -68,6 +73,10 @@ public class MainActivity extends AppCompatActivity {
                 .withToolbar(toolbar)
                 .withAccountHeader(headerResult)
                 .addDrawerItems(
+                        new SecondaryDrawerItem()
+                                .withName(R.string.drawer_item_main_settings)
+                                .withIcon(FontAwesome.Icon.faw_cog)
+                                .withIdentifier(20).withCheckable(false),
                         new SectionDrawerItem().withName(R.string.drawer_item_section_header),
                         new SwitchDrawerItem()
                                 .withName("Camera sound warning")
@@ -79,6 +88,21 @@ public class MainActivity extends AppCompatActivity {
                                 .withIcon(CommunityMaterial.Icon.cmd_vibrate)
                                 .withChecked(getSwitchDrawerItemValue("Camera vibrate warning"))
                                 .withOnCheckedChangeListener(onCheckedChangeListener))
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                    @Override
+                    public boolean onItemClick(AdapterView<?> parent, View view, int position,
+                                               long id, IDrawerItem drawerItem) {
+                        Intent intent = null;
+                        if (drawerItem.getIdentifier() == 20) {
+                            intent = new Intent(MainActivity.this, SettingsActivity.class);
+                        }
+                        if (intent != null) {
+                            MainActivity.this.startActivity(intent);
+                        }
+
+                        return false;
+                    }
+                })
                 .withAnimateDrawerItems(true)
                 .withSavedInstance(savedInstanceState)
                 .build();

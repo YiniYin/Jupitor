@@ -14,11 +14,11 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
+        android:name=".Jupitor"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/MaterialDrawerTheme.TranslucentStatus"
-        android:name="jupitor.konex.jupitor.Jupitor">
+        android:theme="@style/MaterialDrawerTheme.TranslucentStatus" >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
@@ -30,7 +30,8 @@
         </activity>
 
         <meta-data
-            android:name="DISTRIBUTION_REGION" android:value="New Zealand" />
+            android:name="DISTRIBUTION_REGION"
+            android:value="New Zealand" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -38,13 +39,22 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/google_maps_key" />
         <meta-data
-            android:name="DATABASE" android:value="jupitor.db" />
+            android:name="DATABASE"
+            android:value="jupitor.db" />
         <meta-data
-            android:name="VERSION" android:value="1" />
+            android:name="VERSION"
+            android:value="1" />
         <meta-data
-            android:name="QUERY_LOG" android:value="true" />
+            android:name="QUERY_LOG"
+            android:value="true" />
         <meta-data
-            android:name="DOMAIN_PACKAGE_NAME" android:value="jupitor.konex.jupitor" />
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="jupitor.konex.jupitor" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
     </application>
 
 </manifest>
