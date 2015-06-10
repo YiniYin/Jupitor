@@ -10,6 +10,8 @@ public class SpeedCameraWarningHelper {
     public static Camera getApproachingCamera(Location currentLoc, Location prevLoc) {
         Location speedCameraLoc = new Location("Default Location Provider");
         Camera approachingCamera = new Camera();
+        approachingCamera.latitude = 0;
+        approachingCamera.longitude = 0;
         float prevDistance, currentDistance, shortestDistance = Float.MAX_VALUE;
         double latUpBond = currentLoc.getLatitude() + 0.01, latLowBond = currentLoc.getLatitude() - 0.01;
         double lngRightBond = currentLoc.getLongitude() + 0.01, lngLeftBond = currentLoc.getLongitude() - 0.01;

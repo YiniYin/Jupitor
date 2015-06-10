@@ -9,8 +9,11 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,10 +39,12 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
+import com.mikepenz.materialdrawer.model.interfaces.Nameable;
 
 import java.util.List;
 
 import jupitor.konex.jupitor.dataAccess.Camera;
+import jupitor.konex.jupitor.dataAccess.UserPreference;
 
 import static jupitor.konex.jupitor.utils.SpeedCameraWarningHelper.getApproachingCamera;
 
@@ -265,7 +270,40 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     }
 
     private void warnApproachingCamera(Camera camera) {
+        Location cameraLocation =  new Location("Camera location");
+        cameraLocation.setLatitude(camera.latitude);
+        cameraLocation.setLongitude(camera.longitude);
+        float distance = mCurrentLocation.distanceTo(cameraLocation);
 
+        // TODO: change warning distance.
+        if (distance <= 100) {
+            Toast.makeText(this.getActivity(), "Approaching speed camera in " + distance + " meters.",
+                    Toast.LENGTH_LONG).show();
+            vibrate();
+            ring();
+        }
+    }
+
+    private void vibrate() {
+        UserPreference vibrateWarning = (UserPreference.find(UserPreference.class, "NAME = ?",
+                "Camera vibrate warning")).get(0);
+
+        if (Boolean.valueOf(vibrateWarning.value)) {
+            Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone sound = RingtoneManager.getRingtone(this.getActivity(), notify);
+            sound.play();
+        }
+    }
+
+    private void ring() {
+        // TODO: replace pref name with a constant.
+        UserPreference soundWarning = (UserPreference.find(UserPreference.class, "NAME = ?",
+                "Camera sound warning")).get(0);
+
+        if (Boolean.valueOf(soundWarning.value)) {
+            Vibrator vibrator = (Vibrator)this.getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(500);
+        }
     }
 
     @Override
