@@ -1,6 +1,5 @@
 package jupitor.konex.jupitor;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -20,7 +19,6 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
-import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
@@ -51,13 +49,13 @@ public class MainActivity extends AppCompatActivity {
         initProfile(savedInstanceState);
         Toolbar toolbar = initToolbar();
         initDrawer(savedInstanceState, toolbar);
-        initMap();
+        initDefaultFragment();
     }
 
-    private void initMap() {
+    private void initDefaultFragment() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.frame_map_container, MapFragment.newInstance(1))
+                .replace(R.id.frame_fragment_container, MapFragment.newInstance(1))
                 .commit();
     }
 
@@ -74,7 +72,11 @@ public class MainActivity extends AppCompatActivity {
                 .withAccountHeader(headerResult)
                 .addDrawerItems(
                         new SecondaryDrawerItem()
-                                .withName(R.string.drawer_item_main_settings)
+                                .withName(R.string.drawer_item_maps)
+                                .withIcon(FontAwesome.Icon.faw_map_marker)
+                                .withIdentifier(10).withCheckable(false),
+                        new SecondaryDrawerItem()
+                                .withName(R.string.drawer_item_settings)
                                 .withIcon(FontAwesome.Icon.faw_cog)
                                 .withIdentifier(20).withCheckable(false),
                         new SectionDrawerItem().withName(R.string.drawer_item_section_header),
@@ -92,13 +94,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onItemClick(AdapterView<?> parent, View view, int position,
                                                long id, IDrawerItem drawerItem) {
-                        Intent intent = null;
-                        if (drawerItem.getIdentifier() == 20) {
-                            intent = new Intent(MainActivity.this, SettingsActivity.class);
-                        }
-                        if (intent != null) {
-                            MainActivity.this.startActivity(intent);
-                        }
+
+                        getFragment(drawerItem.getIdentifier());
 
                         return false;
                     }
@@ -106,6 +103,22 @@ public class MainActivity extends AppCompatActivity {
                 .withAnimateDrawerItems(true)
                 .withSavedInstance(savedInstanceState)
                 .build();
+    }
+
+    private void getFragment(int fragmentId) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        if (fragmentId == 20) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.frame_fragment_container, SettingsFragment.newInstance(fragmentId))
+                    .commit();
+        }
+
+        if (fragmentId == 10) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.frame_fragment_container, MapFragment.newInstance(fragmentId))
+                    .commit();
+        }
     }
 
     private boolean getSwitchDrawerItemValue(String itemName) {

@@ -39,7 +39,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
-import com.mikepenz.materialdrawer.model.interfaces.Nameable;
+
 
 import java.util.List;
 
@@ -52,7 +52,7 @@ import static jupitor.konex.jupitor.utils.SpeedCameraWarningHelper.getApproachin
 public class MapFragment extends Fragment implements SensorEventListener, GoogleApiClient.ConnectionCallbacks
         ,GoogleApiClient.OnConnectionFailedListener,LocationListener,OnMapReadyCallback {
     private final String TAG = "JupiterMap";
-    private static final String ARG_SECTION_NUMBER = "section_number";
+    //private static final String ARG_SECTION_NUMBER = "section_number";
     private static boolean magicCameraOn = false;
     private static boolean searchRadiusOn = false;
     private static LatLng mCurrentLatLng;
@@ -81,7 +81,7 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     public static MapFragment newInstance(int sectionNumber) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+        args.putInt(consts.ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
         return fragment;
     }
@@ -258,7 +258,7 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
     @Override
     public void onLocationChanged(Location location) {
         //mLocationView.setText("Location received: " + location.toString());
-        mPrevLocation = mCurrentLocation;
+        mPrevLocation = mCurrentLocation != null ? mCurrentLocation : location ;
         mCurrentLocation = location;
         mCurrentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         speedCameraWarning(mCurrentLocation, mPrevLocation);

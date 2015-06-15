@@ -4,6 +4,7 @@ package jupitor.konex.jupitor;
 import com.google.android.gms.maps.model.LatLng;
 
 public class consts {
+    public static final String ARG_SECTION_NUMBER = "section_number";
     public static String dbPath = "/data/data/jupitor.konex.jupitor/databases/jupitor.db";
     public static String dbName = "jupitor.db";
     public static double auckland_latitude = -36.848189;

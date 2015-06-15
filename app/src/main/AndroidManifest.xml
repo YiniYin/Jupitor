@@ -52,7 +52,7 @@
             android:value="jupitor.konex.jupitor" />
 
         <activity
-            android:name=".SettingsActivity"
+            android:name=".SettingsFragment"
             android:label="@string/title_activity_settings" >
         </activity>
     </application>

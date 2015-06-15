@@ -21,7 +21,7 @@
 
         <FrameLayout
             android:layout_below="@id/toolbar"
-            android:id="@+id/frame_map_container"
+            android:id="@+id/frame_fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         </FrameLayout>

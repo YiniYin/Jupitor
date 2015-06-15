@@ -2,13 +2,13 @@
 
     <!-- These settings headers are only used on tablets. -->
 
-    <header android:fragment="jupitor.konex.jupitor.SettingsActivity$GeneralPreferenceFragment"
+    <header android:fragment="jupitor.konex.jupitor.SettingsFragment$GeneralPreferenceFragment"
         android:title="@string/pref_header_general" />
 
-    <header android:fragment="jupitor.konex.jupitor.SettingsActivity$NotificationPreferenceFragment"
+    <header android:fragment="jupitor.konex.jupitor.SettingsFragment$NotificationPreferenceFragment"
         android:title="@string/pref_header_notifications" />
 
-    <header android:fragment="jupitor.konex.jupitor.SettingsActivity$DataSyncPreferenceFragment"
+    <header android:fragment="jupitor.konex.jupitor.SettingsFragment$DataSyncPreferenceFragment"
         android:title="@string/pref_header_data_sync" />
 
 </preference-headers>
