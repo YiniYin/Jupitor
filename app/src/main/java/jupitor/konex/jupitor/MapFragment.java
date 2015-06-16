@@ -276,7 +276,7 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
         float distance = mCurrentLocation.distanceTo(cameraLocation);
 
         // TODO: change warning distance.
-        if (distance <= 100) {
+        if (distance <= 1000) {
             Toast.makeText(this.getActivity(), "Approaching speed camera in " + distance + " meters.",
                     Toast.LENGTH_LONG).show();
             vibrate();
@@ -289,9 +289,8 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
                 "Camera vibrate warning")).get(0);
 
         if (Boolean.valueOf(vibrateWarning.value)) {
-            Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone sound = RingtoneManager.getRingtone(this.getActivity(), notify);
-            sound.play();
+            Vibrator vibrator = (Vibrator)this.getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+            vibrator.vibrate(500);
         }
     }
 
@@ -301,8 +300,9 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
                 "Camera sound warning")).get(0);
 
         if (Boolean.valueOf(soundWarning.value)) {
-            Vibrator vibrator = (Vibrator)this.getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-            vibrator.vibrate(500);
+            Uri notify = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone sound = RingtoneManager.getRingtone(this.getActivity(), notify);
+            sound.play();
         }
     }
 
