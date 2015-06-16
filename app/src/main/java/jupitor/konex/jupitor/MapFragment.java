@@ -276,7 +276,7 @@ public class MapFragment extends Fragment implements SensorEventListener, Google
         float distance = mCurrentLocation.distanceTo(cameraLocation);
 
         // TODO: change warning distance.
-        if (distance <= 1000) {
+        if (distance <= 100) {
             Toast.makeText(this.getActivity(), "Approaching speed camera in " + distance + " meters.",
                     Toast.LENGTH_LONG).show();
             vibrate();

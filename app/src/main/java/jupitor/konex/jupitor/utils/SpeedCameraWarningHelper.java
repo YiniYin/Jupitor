@@ -26,7 +26,7 @@ public class SpeedCameraWarningHelper {
             currentDistance = currentLoc.distanceTo(speedCameraLoc);
             prevDistance = prevLoc.distanceTo(speedCameraLoc);
 
-            if (currentDistance <= prevDistance && currentDistance < shortestDistance) {
+            if (currentDistance < prevDistance && currentDistance < shortestDistance) {
                 shortestDistance = currentDistance;
                 approachingCamera = speedCamera;
             }

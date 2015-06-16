@@ -1,12 +1,42 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="jupitor.konex.jupitor.SettingsFragment">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <com.gc.materialdesign.views.ScrollView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <com.gc.materialdesign.views.ButtonFlat
+                    android:id="@+id/buttonflat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#1E88E5"
+                    android:text="Button" />
+
+                <com.gc.materialdesign.views.Slider
+                    android:id="@+id/slider"
+                    android:layout_width="@dimen/setting_item_primary_width"
+                    android:layout_height="wrap_content"
+                    android:background="#1E88E5"
+                    materialdesign:max="150"
+                    materialdesign:min="0"
+                    materialdesign:showNumberIndicator="true"/>
+
+            </LinearLayout>
+        </com.gc.materialdesign.views.ScrollView>
 </RelativeLayout>
