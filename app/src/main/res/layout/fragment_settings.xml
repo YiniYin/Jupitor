@@ -21,21 +21,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <com.gc.materialdesign.views.ButtonFlat
-                    android:id="@+id/buttonflat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="#1E88E5"
-                    android:text="Button" />
-
-                <com.gc.materialdesign.views.Slider
-                    android:id="@+id/slider"
-                    android:layout_width="@dimen/setting_item_primary_width"
-                    android:layout_height="wrap_content"
-                    android:background="#1E88E5"
-                    materialdesign:max="150"
-                    materialdesign:min="0"
-                    materialdesign:showNumberIndicator="true"/>
+                <include layout="@layout/slider"/>
 
             </LinearLayout>
         </com.gc.materialdesign.views.ScrollView>
