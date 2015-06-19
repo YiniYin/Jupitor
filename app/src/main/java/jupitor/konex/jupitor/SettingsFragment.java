@@ -39,8 +39,8 @@ public class SettingsFragment extends Fragment {
     }
 
     private void initView(View view) {
-        distanceWarningSlider = (Slider) view.findViewById(R.id.distanceWarningSlider);
-        distanceWarningSlider.setOnValueChangedListener(onValueChangedListener);
+        //distanceWarningSlider = (Slider) view.findViewById(R.id.distanceWarningSlider);
+        //distanceWarningSlider.setOnValueChangedListener(onValueChangedListener);
     }
 
     private Slider.OnValueChangedListener onValueChangedListener = new Slider.OnValueChangedListener() {

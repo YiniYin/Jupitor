@@ -27,9 +27,9 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:layout_toEndOf="@id/icon"
-        android:layout_toLeftOf="@+id/distanceWarningSlider"
+        android:layout_toLeftOf="@+id/slider"
         android:layout_toRightOf="@id/icon"
-        android:layout_toStartOf="@+id/distanceWarningSlider"
+        android:layout_toStartOf="@+id/slider"
         android:gravity="center_vertical|start"
         android:orientation="vertical">
 
@@ -57,7 +57,7 @@
     </LinearLayout>
 
     <com.gc.materialdesign.views.Slider
-        android:id="@+id/distanceWarningSlider"
+        android:id="@+id/slider"
         android:layout_width="@dimen/setting_item_primary_width"
         android:layout_height="wrap_content"
         android:background="#1E88E5"
